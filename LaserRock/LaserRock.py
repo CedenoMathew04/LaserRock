@@ -147,9 +147,6 @@ meteor_list = ["assets/meteorGrey_big1.png", "assets/meteorGrey_big2.png", "asse
 for img in meteor_list:
 	meteor_images.append(pygame.image.load(img).convert())
 
-> .[NOTE].
-> Cargar imagenes explosión
-
 ## --------------- CARGAR IMAGENES EXPLOSIÓN -------------------------- ##
 explosion_anim = []
 for i in range(9):
