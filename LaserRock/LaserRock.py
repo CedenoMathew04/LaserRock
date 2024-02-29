@@ -31,7 +31,6 @@ def draw_shield_bar(surface, x, y, percentage):
 	pygame.draw.rect(surface, GREEN, fill)
 	pygame.draw.rect(surface, WHITE, border, 2)
 
-
 class Player(pygame.sprite.Sprite):
 	def __init__(self):
 		super().__init__()
@@ -62,8 +61,8 @@ class Player(pygame.sprite.Sprite):
 		all_sprites.add(bullet)
 		bullets.add(bullet)
 
-		#Agregamos sonido
-		#laser_sound.play()
+		#SONIDO DEL LASER
+		laser_sound.play()
 
 class Meteor(pygame.sprite.Sprite):
 	def __init__(self):
@@ -82,7 +81,7 @@ class Meteor(pygame.sprite.Sprite):
 		if self.rect.top > HEIGHT + 10 or self.rect.left < -25 or self.rect.right > WIDTH + 22 :
 			self.rect.x = random.randrange(WIDTH - self.rect.width)
 
-			#Change this variable
+			#VARIABLES DE LOS METEOROS
 			self.rect.y = random.randrange(-150, -100)
 			self.speedy = random.randrange(1, 8)
 
@@ -109,7 +108,7 @@ class Explosion(pygame.sprite.Sprite):
 		self.rect.center = center
 		self.frame = 0
 		self.last_update = pygame.time.get_ticks()
-		self.frame_rate = 50 # how long to wait for the next frame VELOCITY OF THE EXPLOSION
+		self.frame_rate = 50 # PARA DEFINIR LA VELOCIDAD DEL SIGUIENTE FRAME DE LA EXPLOSIÓN
 
 	def update(self):
 		now = pygame.time.get_ticks()
@@ -117,7 +116,7 @@ class Explosion(pygame.sprite.Sprite):
 			self.last_update = now
 			self.frame += 1
 			if self.frame == len(explosion_anim):
-				self.kill() # if we get to the end of the animation we don't keep going.
+				self.kill() # PARA NO CONTINUAR DESPUÉS DE LA ANIMACIÓN
 			else:
 				center = self.rect.center
 				self.image = explosion_anim[self.frame]
@@ -127,7 +126,7 @@ class Explosion(pygame.sprite.Sprite):
 
 def show_go_screen():
 	screen.blit(background, [0, 0])
-	draw_text(screen, "SHOOTER", 65, WIDTH // 2, HEIGHT / 4)
+	draw_text(screen, "LASER ROCK", 65, WIDTH // 2, HEIGHT / 4)
 	draw_text(screen, "(Instructions)", 27, WIDTH // 2, HEIGHT // 2)
 	draw_text(screen, "Press key to begin", 17, WIDTH // 2, HEIGHT * 3/4)
 	pygame.display.flip()
@@ -147,7 +146,7 @@ meteor_list = ["assets/meteorGrey_big1.png", "assets/meteorGrey_big2.png", "asse
 for img in meteor_list:
 	meteor_images.append(pygame.image.load(img).convert())
 
-## --------------- CARGAR IMAGENES EXPLOSIÓN -------------------------- ##
+#--------CARGAR IMAGENES EXPLOSIÓN
 explosion_anim = []
 for i in range(9):
 	file = "assets/regularExplosion0{}.png".format(i)
@@ -157,19 +156,18 @@ for i in range(9):
 	explosion_anim.append(img_scale)
 
 
-# Cargar fondo.
+#----CARGAR FONDO
 background = pygame.image.load("assets/background.png").convert()
 
-# Cargar sonidos
+#----CARGAR SONIDOS
 laser_sound = pygame.mixer.Sound("assets/laser5.ogg")
 explosion_sound = pygame.mixer.Sound("assets/explosion.wav")
 pygame.mixer.music.load("assets/music.ogg")
 pygame.mixer.music.set_volume(0.1)
 
-
 #pygame.mixer.music.play(loops=-1)
 
-# Game Loop
+# LOOP
 game_over = True
 running = True
 while running:
@@ -190,9 +188,9 @@ while running:
 
 		#Marcador / Score
 		score = 0
-	# Keep loop running at the right speed
+	# BUCLE A LA VELOCIDAD ADECUADA
 	clock.tick(60)
-	# Process input (events)
+	# EVENTOS
 	for event in pygame.event.get():
 		# check for closing window
 		if event.type == pygame.QUIT:
@@ -206,11 +204,11 @@ while running:
 	# Update
 	all_sprites.update()
 
-	# Colisiones meteoro - laser
+	# COLISIONES METEOROS-LASER
 	hits = pygame.sprite.groupcollide(meteor_list, bullets, True, True)
 	for hit in hits:
 		score += 1
-		#explosion_sound.play()
+		explosion_sound.play()
 		explosion = Explosion(hit.rect.center)
 		all_sprites.add(explosion)
 
@@ -219,11 +217,11 @@ while running:
 		meteor_list.add(meteor)
 
 		
-	# Colisiones jugador - meteoro
+	# COLISIONES JUGADOR - METEOROS
 
+	#CAMBIAR VARIABLES
 
-	################## CHANGES HERE ################################
-	hits = pygame.sprite.spritecollide(player, meteor_list, True) # Change here
+	hits = pygame.sprite.spritecollide(player, meteor_list, True)
 	for hit in hits:
 		player.shield -= 25
 		meteor = Meteor()
@@ -231,18 +229,16 @@ while running:
 		meteor_list.add(meteor)
 		if player.shield <= 0:
 			#running = False
-
-
 			game_over = True
 
-	#Draw / Render
+	#DRAW / Render
 	screen.blit(background, [0, 0])
 	all_sprites.draw(screen)
 
-	# Marcador
+	# BARRA DE VIDA
 	draw_text(screen, str(score), 25, WIDTH // 2, 10)
 
-	# ESCUDO.
+	# ESCUDO
 	draw_shield_bar(screen, 5, 5, player.shield)
 
 
